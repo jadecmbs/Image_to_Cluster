@@ -123,3 +123,20 @@ Accès à l'interface (le port-forwarding)
 kubectl port-forward svc/nginx-service 8080:80
 ```
 Cliquez sur l'alerte "Open in Browser" -> une maison apparait
+
+### 6. Automatisation avec Makefile
+
+Lancer tout le projet 
+```
+make all
+```
+
+Nettoyer l'environnement 
+```
+make clean
+```
+
+Lancer uniquement le déploiement 
+```
+make deploy
+```
