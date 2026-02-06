@@ -1,0 +1,48 @@
+---
+- name: Deploiement de l'application Nginx custom
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Créer un Deployment pour Nginx
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: nginx-custom
+            namespace: default
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: nginx
+            template:
+              metadata:
+                labels:
+                  app: nginx
+              spec:
+                containers:
+                  - name: nginx
+                    image: my-nginx-image:latest
+                    imagePullPolicy: Never # Très important ! Force l'usage de l'image importée
+                    ports:
+                      - containerPort: 80
+
+    - name: Créer un Service pour exposer Nginx
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: nginx-service
+            namespace: default
+          spec:
+            selector:
+              app: nginx
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 80
+            type: LoadBalancer

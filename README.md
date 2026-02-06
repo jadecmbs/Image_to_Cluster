@@ -4,16 +4,7 @@ ATELIER FROM IMAGE TO CLUSTER
 L’idée en 30 secondes : Cet atelier consiste à **industrialiser le cycle de vie d’une application** simple en construisant une **image applicative Nginx** personnalisée avec **Packer**, puis en déployant automatiquement cette application sur un **cluster Kubernetes** léger (K3d) à l’aide d’**Ansible**, le tout dans un environnement reproductible via **GitHub Codespaces**.
 L’objectif est de comprendre comment des outils d’Infrastructure as Code permettent de passer d’un artefact applicatif maîtrisé à un déploiement cohérent et automatisé sur une plateforme d’exécution.
   
--------------------------------------------------------------------------------------------------------
-Séquence 1 : Codespace de Github
--------------------------------------------------------------------------------------------------------
-Objectif : Création d'un Codespace Github  
-Difficulté : Très facile (~5 minutes)
--------------------------------------------------------------------------------------------------------
-**Faites un Fork de ce projet**. Si besion, voici une vidéo d'accompagnement pour vous aider dans les "Forks" : [Forker ce projet](https://youtu.be/p33-7XQ29zQ) 
-  
-Ensuite depuis l'onglet [CODE] de votre nouveau Repository, **ouvrez un Codespace Github**.
-  
+---------------------------------------------------
 ---------------------------------------------------
 Séquence 2 : Création du cluster Kubernetes K3d
 ---------------------------------------------------
@@ -73,20 +64,62 @@ Votre mission (si vous l'acceptez) : Créez une **image applicative customisée 
 6. Ouverture des ports et vérification du fonctionnement
 
 ---------------------------------------------------
-Séquence 4 : Documentation  
-Difficulté : Facile (~30 minutes)
 ---------------------------------------------------
-**Complétez et documentez ce fichier README.md** pour nous expliquer comment utiliser votre solution.  
-Faites preuve de pédagogie et soyez clair dans vos expliquations et processus de travail.  
-   
----------------------------------------------------
-Evaluation
----------------------------------------------------
-Cet atelier, **noté sur 20 points**, est évalué sur la base du barème suivant :  
-- Repository exécutable sans erreur majeure (4 points)
-- Fonctionnement conforme au scénario annoncé (4 points)
-- Degré d'automatisation du projet (utilisation de Makefile ? script ? ...) (4 points)
-- Qualité du Readme (lisibilité, erreur, ...) (4 points)
-- Processus travail (quantité de commits, cohérence globale, interventions externes, ...) (4 points) 
+
+# Les Outils et leurs Rôles
+
+Packer créé une image Docker "immutable" en prenant une base Nginx et en y injectant notre code (index.html).
+
+K3dLe est une version légère de Kubernetes (K3s) qui tourne dans Docker, idéale pour simuler un environnement de production localement.
+
+Ansible automatise le déploiement. Au lieu de taper des commandes kubectl manuellement, on décrit l'état voulu dans un fichier YAML.
+
+GitHub Codespaces fournit une machine de développement reproductible dans le cloud.
 
 
+## Guide de démarrage r
+
+### 1. Préparation de l'environnement
+
+```
+Installation de Packer
+wget https://releases.hashicorp.com/packer/1.10.0/packer_1.10.0_linux_amd64.zip
+unzip packer_1.10.0_linux_amd64.zip && sudo mv packer /usr/local/bin/
+
+# Installation d'Ansible et des dépendances K8s
+pip install ansible kubernetes
+ansible-galaxy collection install kubernetes.core
+```
+
+### 2. Création de l'infrastructure
+```
+k3d cluster create lab --servers 1 --agents 2
+```
+
+### 3. Build et Import de l'image
+```
+# Build de l'image custom
+packer init image.pkr.hcl
+packer build image.pkr.hcl
+
+# Import dans le cluster
+k3d image import my-nginx-image:latest -c lab
+```
+
+### 4. Déploiement 
+```
+ansible-playbook deploy.yml
+```
+### 5. Vérifier que tout fonctionne 
+
+Vérifier les ressources
+```
+kubectl get all
+```
+->  2 pods nginx-custom en état "Running" et un service nginx-service.
+
+Accès à l'interface (le port-forwarding)
+```
+kubectl port-forward svc/nginx-service 8080:80
+```
+Cliquez sur l'alerte "Open in Browser" -> une maison apparait
