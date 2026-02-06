@@ -45,7 +45,6 @@ Ouvrez l'URL dans votre navigateur et jouer !
 Séquence 3 : Exercice
 ---------------------------------------------------
 Objectif : Customisez un image Docker avec Packer et déploiement sur K3d via Ansible
-Difficulté : Moyen/Difficile (~2h)
 ---------------------------------------------------  
 Votre mission (si vous l'acceptez) : Créez une **image applicative customisée à l'aide de Packer** (Image de base Nginx embarquant le fichier index.html présent à la racine de ce Repository), puis déployer cette image customisée sur votre **cluster K3d** via **Ansible**, le tout toujours dans **GitHub Codespace**.  
 
@@ -66,7 +65,7 @@ Votre mission (si vous l'acceptez) : Créez une **image applicative customisée 
 ---------------------------------------------------
 ---------------------------------------------------
 
-# Les Outils et leurs Rôles
+## Les Outils et leurs Rôles
 
 Packer créé une image Docker "immutable" en prenant une base Nginx et en y injectant notre code (index.html).
 
@@ -77,12 +76,12 @@ Ansible automatise le déploiement. Au lieu de taper des commandes kubectl manue
 GitHub Codespaces fournit une machine de développement reproductible dans le cloud.
 
 
-## Guide de démarrage r
+## Guide de démarrage 
 
 ### 1. Préparation de l'environnement
 
 ```
-Installation de Packer
+# Installation de Packer
 wget https://releases.hashicorp.com/packer/1.10.0/packer_1.10.0_linux_amd64.zip
 unzip packer_1.10.0_linux_amd64.zip && sudo mv packer /usr/local/bin/
 
